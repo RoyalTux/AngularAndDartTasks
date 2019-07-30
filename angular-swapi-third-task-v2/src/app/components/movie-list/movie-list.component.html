@@ -1,0 +1,6 @@
+<h2>Films</h2>
+<ul *ngFor="let movie of movies">
+  <p>{{movie.title}}<button routerLink="/movie/{{movie.id}}">more...</button></p>
+</ul>
+
+

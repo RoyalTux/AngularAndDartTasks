@@ -1,0 +1,16 @@
+<div>
+  <button (click)="goBack()" routerLink="/movies" href="">Back</button>
+</div>
+
+<div *ngIf="movie">
+  <h3>{{movie.title | uppercase}}</h3>
+  <p> Description:<br> {{movie.description}}</p>
+  <p>Producer: {{movie.director}}</p>
+  <p>Director: {{movie.director}}</p>
+  <p>Release: {{movie.releaseYear}}</p>
+</div>
+
+
+
+
+
