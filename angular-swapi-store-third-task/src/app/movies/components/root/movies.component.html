@@ -1,0 +1,7 @@
+<h2>Swapi Movies</h2>
+
+<ul *ngIf="movies$ | async; let movies;">
+  <li *ngFor="let movie of movies" (click)="onClick(movie)"> 
+    {{ movie.title }}
+  </li>
+</ul>

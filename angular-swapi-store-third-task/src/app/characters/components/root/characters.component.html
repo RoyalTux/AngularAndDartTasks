@@ -1,0 +1,8 @@
+<button mat-icon-button (click)="onBackClick()">back</button>
+<h2>Movie Characters</h2>
+
+<ul *ngIf="characters$ | async; let characters">
+  <li *ngFor="let character of characters.characters"> 
+    {{ character.name }} : {{ character.gender }}
+  </li>
+</ul>
