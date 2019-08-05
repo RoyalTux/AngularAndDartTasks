@@ -1,31 +1,48 @@
-<!-- Components info: https://webdev.dartlang.org/components -->
-<div>
-  <material-input label="What do you need to do?"
-                  autoFocus floatingLabel style="width:80%"
-                  [(ngModel)]="newTodo"
-                  (keyup.enter)="add()">
-  </material-input>
+<base-bloc></base-bloc>
 
-  <material-fab mini raised
-                (trigger)="add()"
-                [disabled]="newTodo.isEmpty">
-    <material-icon icon="add"></material-icon>
-  </material-fab>
+<div class="todo-navigation">
+    <material-fab mini (trigger)="addNew()">
+        <material-icon icon="add"></material-icon>
+    </material-fab>
+
+    <material-fab mini (trigger)="logout()">
+        <material-icon icon="power_settings_new"></material-icon>
+    </material-fab>
+
 </div>
 
-<p *ngIf="items.isEmpty">
-  Nothing to do! Add items above.
-</p>
+<div class="flex-container">
+    <div *ngIf="((todoListBloc.todosStream | async) != null)"
+        class="list-layout">
+        <div>
+            <ul>
+                <li *ngFor="let item of (todoListBloc.todosStream | async); let i=index"
+                    (click)="showDetail(item.id)"
+                    [class.done]="item.done"
+                    [class.pending]="!item.done">
+                    <div class="item">
+                        <div class="item-header">
+                            <material-checkbox
+                                    #done
+                                    [checked]="item.done"
+                                    materialTooltip="Mark item as done"
+                                    (click)="todoListBloc.todoChangeDoneSink.add(item.id); $event.stopPropagation()">
+                            </material-checkbox>
+                            <h3>{{item.title}}</h3>
+                            <material-fab mini (trigger)="deleteItem(item.id); $event.stopPropagation()">
+                                <material-icon icon="delete"></material-icon>
+                            </material-fab>
+                        </div>
+                        <div class="item-details">
+                            <p>{{item.description}}</p>
+                            <p *ngIf="item.done">Created: {{item.created.toString()}}</p>
+                            <p *ngIf="item.done">Ended: {{item.ended.toString()}}</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-<div *ngIf="items.isNotEmpty">
-  <ul>
-      <li *ngFor="let item of items; let i=index">
-        <material-checkbox #done materialTooltip="Mark item as done">
-        </material-checkbox>
-        <span [class.done]="done.checked">{{item}}</span>
-        <material-fab mini (trigger)="remove(i)">
-          <material-icon icon="delete"></material-icon>
-        </material-fab>
-      </li>
-  </ul>
+    <todo-detail *ngIf="todoId != null" [todoId]="todoId" (closeDetailStream) = "closeDetail($event)" class="list-detail"></todo-detail>
 </div>

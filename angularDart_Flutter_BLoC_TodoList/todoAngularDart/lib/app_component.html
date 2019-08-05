@@ -1,3 +1,8 @@
-<h1>My First AngularDart App</h1>
+<div class="app-content">
+    <div class="container">
+    <h1 class="component-title">{{appTitle}}</h1>
 
-<todo-list></todo-list>
+    <login-component *ngIf="(session.isSignedIn | async) == null || (session.isSignedIn | async) == false" ></login-component>
+    <todo-list *ngIf="(session.isSignedIn | async) == true"></todo-list>
+    </div>
+</div>

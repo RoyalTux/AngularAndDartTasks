@@ -1,41 +1,64 @@
-import 'dart:async';
-
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-
-import 'todo_list_service.dart';
+import 'package:bloc/bloc.dart';
+import 'package:todoapp/src/base/base_bloc_component.dart';
+import 'package:todoapp/src/repository_impl/todo_repository_impl.dart';
+import 'package:todoapp/src/todo_detail/todo_detail.dart';
 
 @Component(
   selector: 'todo-list',
   styleUrls: ['todo_list_component.css'],
   templateUrl: 'todo_list_component.html',
   directives: [
+    coreDirectives,
     MaterialCheckboxComponent,
     MaterialFabComponent,
     MaterialIconComponent,
     materialInputDirectives,
     NgFor,
     NgIf,
+    BaseBlocComponent,
+    TodoDetailComponent,
   ],
-  providers: [ClassProvider(TodoListService)],
+  providers: [
+    ClassProvider(ToDoRepository, useClass: ToDoRepositoryImpl),
+    ClassProvider(TodoListBloc),
+    ExistingProvider(BaseBloc, TodoListBloc)
+  ],
+  pipes: [commonPipes],
 )
-class TodoListComponent implements OnInit {
-  final TodoListService todoListService;
+class TodoListComponent implements OnDestroy {
 
-  List<String> items = [];
-  String newTodo = '';
+  String logOutStr = "Log out";
 
-  TodoListComponent(this.todoListService);
+  String todoId;
+
+  TodoListBloc todoListBloc;
+
+  TodoListComponent(this.todoListBloc);
+
+  void showDetail(String todoId) {
+    this.todoId = todoId;
+  }
+
+  void closeDetail(bool close) {
+    if(close)
+      this.todoId = null;
+  }
+
+  void addNew() => this.todoId = "";
+
+  void deleteItem(String todoId) {
+    this.todoId = null;
+    todoListBloc.todoDeleteSink.add(todoId);
+  }
+
+  void logout(){
+    todoListBloc.session.signedIn.add(false);
+  }
 
   @override
-  Future<Null> ngOnInit() async {
-    items = await todoListService.getTodoList();
+  void ngOnDestroy() {
+    todoListBloc.dispose();
   }
-
-  void add() {
-    items.add(newTodo);
-    newTodo = '';
-  }
-
-  String remove(int index) => items.removeAt(index);
 }
